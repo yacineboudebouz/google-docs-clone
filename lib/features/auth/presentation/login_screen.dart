@@ -1,4 +1,3 @@
-import 'package:docs_clone/core/extensions.dart';
 import 'package:docs_clone/core/utils.dart';
 import 'package:docs_clone/features/auth/presentation/login_controller.dart';
 import 'package:docs_clone/theme/colors.dart';
@@ -13,7 +12,6 @@ class LoginScreen extends ConsumerWidget {
     ref.listen<AsyncValue>(loginControllerProvider.select((state) => state),
         (_, state) {
       if (state.hasError) {
-        print(state.error);
         showSnackBar(context, state.error.toString(), Colors.red);
       }
     });
