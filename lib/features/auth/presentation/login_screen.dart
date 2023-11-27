@@ -1,4 +1,5 @@
 import 'package:docs_clone/core/utils.dart';
+import 'package:docs_clone/features/auth/domain/user.dart';
 import 'package:docs_clone/features/auth/presentation/login_controller.dart';
 import 'package:docs_clone/theme/colors.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class LoginScreen extends ConsumerWidget {
         child: ElevatedButton.icon(
           onPressed: () {
             ref.read(loginControllerProvider.notifier).signInWithGoogle();
+            print(ref.read(userStateProvider)?.uid);
           },
           icon: Image.asset(
             'assets/g-logo-2.png',
