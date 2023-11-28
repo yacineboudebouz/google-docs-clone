@@ -1,9 +1,9 @@
 const User = require("../models/user");
-
+const jwt = require("jsonwebtoken");
 const signUp = async (req, res) => {
   try {
     const { name, email, profilePic } = req.body;
-    var user = await User.findOne({ email: email });
+    let user = await User.findOne({ email: email });
     if (!user) {
       user = new User({
         email: email,
@@ -11,15 +11,18 @@ const signUp = async (req, res) => {
         profilePic: profilePic,
       });
       user = await user.save();
-      res
-        .status(201)
-        .json({ message: "User created successfully", user: user });
-    } else {
-      res.status(403).json({ message: "User already exists" });
     }
+    const token = jwt.sign({ id: user._id }, "THISISASECRET");
+    res.status(200).json({ user, token: token });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-module.exports = { signUp };
+const getUserData = async (req, res) => {
+  const user = await User.findById(req.user);
+  if (user) return res.status(200).json({ user, token: req.token });
+  else return res.status(500).json({ message: "User not found" });
+};
+
+module.exports = { signUp, getUserData };

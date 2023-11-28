@@ -38,6 +38,8 @@ dependencies:
   flutter_riverpod: ^2.4.8
   google_sign_in: ^6.1.6
   http: ^1.1.0
+  routemaster: ^1.0.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:docs_clone/core/providers/auth_providers.dart';
+import 'package:docs_clone/core/providers/local_storage_provider.dart';
 import 'package:docs_clone/core/providers/uri_provider.dart';
 import 'package:docs_clone/features/auth/domain/user.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +24,6 @@ class AuthRepository {
     try {
       final user = await _googleSignIn.signIn();
       if (user != null) {
-        print("nmiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
         final userAcc = UserModel(
           email: user.email,
           name: user.displayName!,
@@ -35,19 +35,52 @@ class AuthRepository {
         http.Response res = await http.post(Uri.parse('$uri/auth/signup'),
             body: userAcc.toJson(),
             headers: {'Content-Type': 'application/json; charset=UTF-8'});
-        if (res.statusCode == 201) {
-          _ref.watch(userStateProvider.notifier).update((state) =>
-              userAcc.copyWith(uid: jsonDecode(res.body)['user']['_id']));
+        if (res.statusCode == 201 || res.statusCode == 200) {
+          _ref.watch(userStateProvider.notifier).update(
+                (state) => userAcc.copyWith(
+                  uid: jsonDecode(res.body)['user']['_id'],
+                  token: jsonDecode(res.body)['token'],
+                ),
+              );
+          _ref
+              .read(localStorageProvider)
+              .storeToken(jsonDecode(res.body)['token']);
         }
-        if (res.statusCode == 403) {
-          throw Exception('User already exists');
-        }
+
         if (res.statusCode == 500) {
           throw Exception(json.decode(res.body));
         }
       }
     } catch (e) {
-      throw Exception(e.toString());
+      throw Exception(e);
+    }
+  }
+
+  Future getUserData() async {
+    try {
+      final token = _ref.read(localStorageProvider).getToken();
+
+      if (token == null) {
+        return;
+      }
+      http.Response res = await http.get(Uri.parse('$uri/auth'), headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': token
+      });
+
+      if (res.statusCode == 200) {
+        _ref.read(userStateProvider.notifier).update((state) => UserModel(
+            email: jsonDecode(res.body)['user']['email'],
+            uid: jsonDecode(res.body)['user']['_id'],
+            name: jsonDecode(res.body)['user']['name'],
+            token: jsonDecode(res.body)['token'],
+            profilePic: jsonDecode(res.body)['user']['profilePic']));
+      }
+      if (res.statusCode == 401) {
+        return;
+      }
+    } catch (e) {
+      throw Exception(e);
     }
   }
 }

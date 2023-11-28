@@ -21,7 +21,6 @@ class LoginScreen extends ConsumerWidget {
         child: ElevatedButton.icon(
           onPressed: () {
             ref.read(loginControllerProvider.notifier).signInWithGoogle();
-            print(ref.read(userStateProvider)?.uid);
           },
           icon: Image.asset(
             'assets/g-logo-2.png',

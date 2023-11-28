@@ -12,6 +12,10 @@ class LoginController extends StateNotifier<AsyncValue<void>> {
     state = await AsyncValue.guard(() => _authRepository.signInWithGoogle());
     state = const AsyncData(null);
   }
+
+  void getUserData() async {
+    state = await AsyncValue.guard(() => _authRepository.getUserData());
+  }
 }
 
 final loginControllerProvider =
