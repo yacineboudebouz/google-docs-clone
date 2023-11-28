@@ -8,7 +8,8 @@ class UserModel {
   final String name;
   final String profilePic;
   final String uid;
-  final String token;
+  String token;
+
   UserModel({
     required this.email,
     required this.name,
@@ -16,16 +17,6 @@ class UserModel {
     required this.uid,
     required this.token,
   });
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'email': email,
-      'name': name,
-      'profilePic': profilePic,
-      'uid': uid,
-      'token': token,
-    };
-  }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
@@ -37,10 +28,36 @@ class UserModel {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'email': email,
+      'name': name,
+      'profilePic': profilePic,
+      '_id': uid,
+      'token': token,
+    };
+  }
+
   String toJson() => json.encode(toMap());
 
-  factory UserModel.fromJson(String source) =>
-      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserModel.fromJson(String source) {
+    try {
+      Map<String, dynamic> map = json.decode(source);
+      return UserModel.fromMap(map['user'] as Map<String, dynamic>)
+        ..token = map['token'] as String;
+    } catch (e) {
+      // Handle parsing errors
+      print("Error parsing UserModel from JSON: $e");
+      // You can throw an exception or return a default UserModel instance here
+      return UserModel(
+        email: '',
+        name: '',
+        profilePic: '',
+        uid: '',
+        token: '',
+      );
+    }
+  }
 
   UserModel copyWith({
     String? email,
