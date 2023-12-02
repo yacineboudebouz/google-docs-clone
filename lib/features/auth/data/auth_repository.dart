@@ -69,18 +69,25 @@ class AuthRepository {
       });
 
       if (res.statusCode == 200) {
-        _ref.read(userStateProvider.notifier).update((state) => UserModel(
-            email: jsonDecode(res.body)['user']['email'],
-            uid: jsonDecode(res.body)['user']['_id'],
-            name: jsonDecode(res.body)['user']['name'],
-            token: jsonDecode(res.body)['token'],
-            profilePic: jsonDecode(res.body)['user']['profilePic']));
+        _ref
+            .read(userStateProvider.notifier)
+            .update((state) => UserModel.fromJson(res.body));
       }
       if (res.statusCode == 401) {
         return;
       }
     } catch (e) {
       throw Exception(e);
+    }
+  }
+
+  Future logOut() async {
+    try {
+      await _ref.read(localStorageProvider).removeToken();
+      _ref.read(userStateProvider.notifier).update((state) => null);
+      await _googleSignIn.signOut();
+    } catch (e) {
+      throw e;
     }
   }
 }

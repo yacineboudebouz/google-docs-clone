@@ -27,18 +27,23 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  void getUserData(WidgetRef ref) {
-    ref.watch(loginControllerProvider.notifier).getUserData();
+  void getUserData(WidgetRef ref) async {
+    await ref.watch(loginControllerProvider.notifier).getUserData();
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      getUserData(ref);
+    });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    getUserData(ref);
-
     return MaterialApp.router(
       title: 'Flutter Demo',
       routerDelegate: RoutemasterDelegate(routesBuilder: (context) {
-        print(ref.watch(userStateProvider));
         return ref.watch(userStateProvider) == null
             ? loggedOutRoute
             : loggedInRoute;

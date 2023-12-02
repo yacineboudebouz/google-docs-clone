@@ -19,4 +19,8 @@ class LocalStorage {
   String? getToken() {
     return _sharedPreferences.getString(tokenKey);
   }
+
+  Future removeToken() async {
+    await _sharedPreferences.remove(tokenKey);
+  }
 }

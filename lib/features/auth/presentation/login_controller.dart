@@ -13,8 +13,14 @@ class LoginController extends StateNotifier<AsyncValue<void>> {
     state = const AsyncData(null);
   }
 
-  void getUserData() async {
+  Future getUserData() async {
     state = await AsyncValue.guard(() => _authRepository.getUserData());
+  }
+
+  Future logOut() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _authRepository.logOut());
+    state = const AsyncData(null);
   }
 }
 
