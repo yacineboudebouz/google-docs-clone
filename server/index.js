@@ -3,6 +3,7 @@ const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const authRouter = require("./routes/user");
+const documentRouter = require("./routes/document");
 const connectDB = require("./db/connect");
 dotenv.config();
 
@@ -18,8 +19,7 @@ const start = async () => {
     console.log(error);
   }
 };
-
-start();
-
 app.use(express.json());
 app.use("/api/auth", authRouter);
+app.use("/api/document", documentRouter);
+start();
