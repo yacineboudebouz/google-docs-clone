@@ -1,6 +1,8 @@
+import 'package:docs_clone/core/common/async_value_widget.dart';
 import 'package:docs_clone/core/utils.dart';
-import 'package:docs_clone/features/auth/domain/user.dart';
+
 import 'package:docs_clone/features/auth/presentation/login_controller.dart';
+import 'package:docs_clone/features/home/presentation/document_card.dart';
 import 'package:docs_clone/features/home/presentation/home_controller.dart';
 import 'package:docs_clone/theme/colors.dart';
 import 'package:flutter/material.dart';
@@ -65,11 +67,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   : const Icon(
                       Icons.logout,
                       color: kRedColor,
-                    ))
+                    )),
         ],
       ),
-      body: Center(
-        child: Text(ref.read(userStateProvider)!.name),
+      body: AsyncValueWidget(
+        value: ref.watch(allDocsProvider),
+        data: (docs) {
+          return Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: 10),
+              width: 600,
+              child: ListView.builder(
+                itemBuilder: (ctx, i) {
+                  return DocumentCard(document: docs[i]);
+                },
+                itemCount: docs.length,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

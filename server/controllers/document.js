@@ -16,4 +16,13 @@ create = async (req, res) => {
   }
 };
 
-module.exports = { create };
+getAllDocuments = async (req, res) => {
+  try {
+    const documents = await Document.find({ uid: req.user });
+    res.status(200).json(documents);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+};
+
+module.exports = { create, getAllDocuments };

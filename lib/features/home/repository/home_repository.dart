@@ -12,7 +12,7 @@ final homeRepositoryProvider = Provider<HomeRepository>((ref) {
 
 class HomeRepository {
   HomeRepository({required Ref ref}) : _ref = ref;
-  Ref _ref;
+  final Ref _ref;
 
   Future<DocumentModel?> createDocument() async {
     final token = _ref.read(userStateProvider)!.token;
@@ -30,6 +30,32 @@ class HomeRepository {
         return DocumentModel.fromJson(res.body);
       } else {
         throw 'Cannot create a document';
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<List<DocumentModel>> getAllDocuments() async {
+    final token = _ref.read(userStateProvider)!.token;
+
+    try {
+      http.Response res = await http.get(
+        Uri.parse('$uri/document/all/me'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token
+        },
+      );
+      if (res.statusCode == 200) {
+        List<DocumentModel> documents = [];
+        for (int i = 0; i < jsonDecode(res.body).length; i++) {
+          documents
+              .add(DocumentModel.fromJson(jsonEncode(jsonDecode(res.body)[i])));
+        }
+        return documents;
+      } else {
+        throw Exception('Error occured, cannot import docs !');
       }
     } catch (e) {
       throw Exception(e);

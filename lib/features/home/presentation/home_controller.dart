@@ -7,11 +7,17 @@ final homeControllerProvider =
   return HomeController(homeRepository: ref.read(homeRepositoryProvider));
 });
 
+final allDocsProvider =
+    FutureProvider.autoDispose<List<DocumentModel>>((ref) async {
+  final homeController = ref.watch(homeControllerProvider.notifier);
+  return homeController.getAllDocuments();
+});
+
 class HomeController extends StateNotifier<AsyncValue<DocumentModel?>> {
   HomeController({required HomeRepository homeRepository})
       : _homeRepository = homeRepository,
         super(const AsyncValue.data(null));
-  HomeRepository _homeRepository;
+  final HomeRepository _homeRepository;
   Future createDoc() async {
     state = const AsyncLoading();
     try {
@@ -19,6 +25,15 @@ class HomeController extends StateNotifier<AsyncValue<DocumentModel?>> {
       state = AsyncData(nmi);
     } catch (e, tr) {
       state = AsyncError(e, tr);
+    }
+  }
+
+  Future<List<DocumentModel>> getAllDocuments() async {
+    try {
+      final docs = await _homeRepository.getAllDocuments();
+      return docs;
+    } catch (e) {
+      return [];
     }
   }
 }

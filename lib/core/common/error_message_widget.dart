@@ -5,9 +5,12 @@ class ErrorMessageWidget extends StatelessWidget {
   final String errorMessage;
   @override
   Widget build(BuildContext context) {
-    return Text(
-      errorMessage,
-      style: Theme.of(context).textTheme.headline6!.copyWith(color: Colors.red),
+    return Center(
+      child: Text(
+        errorMessage,
+        style:
+            Theme.of(context).textTheme.headline6!.copyWith(color: Colors.red),
+      ),
     );
   }
 }
