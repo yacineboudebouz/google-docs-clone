@@ -16,6 +16,16 @@ create = async (req, res) => {
   }
 };
 
+update = async (req, res) => {
+  try {
+    const { id, title } = req.body;
+    const document = await Document.findByIdAndUpdate(id, { title });
+    res.status(200).json(document);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+};
+
 getAllDocuments = async (req, res) => {
   try {
     const documents = await Document.find({ uid: req.user });
@@ -25,4 +35,14 @@ getAllDocuments = async (req, res) => {
   }
 };
 
-module.exports = { create, getAllDocuments };
+getById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const document = await Document.findById(id);
+    res.status(200).json(document);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+};
+
+module.exports = { create, getAllDocuments, update, getById };

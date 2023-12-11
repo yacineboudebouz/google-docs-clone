@@ -20,6 +20,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void createDoc(BuildContext context) async {
     final state = ref.watch(homeControllerProvider);
     await ref.read(homeControllerProvider.notifier).createDoc();
+
+    await ref.read(homeControllerProvider.notifier).getAllDocuments();
     if (state.value != null) {
       if (context.mounted) {
         Routemaster.of(context).push('/document/${state.value!.id}');
@@ -53,6 +55,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         actions: [
           IconButton(
               onPressed: () {
+                ref.refresh(allDocsProvider);
+              },
+              icon: const Icon(Icons.refresh)),
+          IconButton(
+              onPressed: () {
                 createDoc(context);
               },
               icon: homeState.isLoading
@@ -78,6 +85,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               margin: const EdgeInsets.only(top: 10),
               width: 600,
               child: ListView.builder(
+                physics: const RangeMaintainingScrollPhysics(),
                 itemBuilder: (ctx, i) {
                   return DocumentCard(document: docs[i]);
                 },

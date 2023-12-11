@@ -14,7 +14,7 @@ class HomeRepository {
   HomeRepository({required Ref ref}) : _ref = ref;
   final Ref _ref;
 
-  Future<DocumentModel?> createDocument() async {
+  Future<DocumentModel> createDocument() async {
     final token = _ref.read(userStateProvider)!.token;
 
     try {
@@ -56,6 +56,45 @@ class HomeRepository {
         return documents;
       } else {
         throw Exception('Error occured, cannot import docs !');
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<DocumentModel> updateDocument(String id, String title) async {
+    final token = _ref.read(userStateProvider)!.token;
+    try {
+      http.Response res = await http.post(Uri.parse('$uri/document/title'),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': token
+          },
+          body: jsonEncode({'id': id, 'title': title}));
+      if (res.statusCode == 200) {
+        return DocumentModel.fromJson(res.body);
+      } else {
+        throw 'Error occured, cannot update Document ';
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<DocumentModel> getDocumentById(String id) async {
+    final token = _ref.read(userStateProvider)!.token;
+    try {
+      http.Response res = await http.get(
+        Uri.parse('$uri/document/$id'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token
+        },
+      );
+      if (res.statusCode == 200) {
+        return DocumentModel.fromJson(res.body);
+      } else {
+        throw 'Error occured, cannot get Document ';
       }
     } catch (e) {
       throw Exception(e);

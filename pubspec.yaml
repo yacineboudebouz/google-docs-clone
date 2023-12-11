@@ -41,6 +41,7 @@ dependencies:
   routemaster: ^1.0.1
   shared_preferences: ^2.2.2
   flutter_quill: ^8.6.4
+  liquid_pull_to_refresh: ^3.0.1
 
 dev_dependencies:
   flutter_test:

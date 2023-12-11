@@ -32,8 +32,19 @@ class HomeController extends StateNotifier<AsyncValue<DocumentModel?>> {
     try {
       final docs = await _homeRepository.getAllDocuments();
       return docs;
-    } catch (e) {
+    } catch (e, tr) {
+      state = AsyncError(e, tr);
       return [];
+    }
+  }
+
+  Future<void> updateDocument(String id, String title) async {
+    try {
+      state = const AsyncLoading();
+      await _homeRepository.updateDocument(id, title);
+      state = const AsyncData(null);
+    } catch (e, tr) {
+      state = AsyncError(e, tr);
     }
   }
 }
