@@ -8,7 +8,7 @@ final documentControllerProvider =
   return DocumentController(homeRepository: ref.watch(homeRepositoryProvider));
 });
 final documentProvider =
-    FutureProvider.family<DocumentModel?, String>((ref, String id) async {
+    FutureProvider.family<DocumentModel, String>((ref, String id) async {
   return ref.read(documentControllerProvider.notifier).getDocumentById(id);
 });
 
@@ -18,14 +18,14 @@ class DocumentController extends StateNotifier<AsyncValue<DocumentModel?>> {
         super(const AsyncData(null));
   final HomeRepository _homeRepository;
 
-  Future<DocumentModel?> getDocumentById(String id) async {
+  Future<DocumentModel> getDocumentById(String id) async {
     try {
       final document = await _homeRepository.getDocumentById(id);
 
       return document;
     } catch (e, tr) {
       state = AsyncError(e, StackTrace.current);
-      return null;
+      throw 'nmii';
     }
   }
 }

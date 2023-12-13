@@ -12,6 +12,6 @@ const {
 documentRouter.post("/create", auth, create);
 documentRouter.get("/all/me", auth, getAllDocuments);
 documentRouter.post("/title", auth, update);
-documentRouter.post("/:id", auth, getById);
+documentRouter.get("/:id", auth, getById);
 
 module.exports = documentRouter;
